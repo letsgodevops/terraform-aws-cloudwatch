@@ -6,7 +6,7 @@ variable "name" {
 }
 
 variable "metrics" {
-  type        = list(list(string))
+  type        = list(any)
   description = "List of metrics to display"
 }
 
