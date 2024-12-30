@@ -15,14 +15,14 @@ variable "stacked" {
 }
 
 module "current" {
-  source = "github.com/letsgodevops/terraform-aws-cloudwatch?ref=v0.0.1/modules/widgets/value"
+  source = "github.com/letsgodevops/terraform-aws-cloudwatch//modules/widgets/value?ref=0.0.1"
 
   name    = "Current usage (${var.name})"
   metrics = var.metrics
 }
 
 module "historical" {
-  source = "github.com/letsgodevops/terraform-aws-cloudwatch?ref=v0.0.1/modules/widgets/line"
+  source = "github.com/letsgodevops/terraform-aws-cloudwatch//modules/widgets/chart?ref=0.0.1"
 
   width   = (24 - module.current.width) # Fill reminging space (this way widget will display next to current value)
   name    = "Usage (${var.name})"
