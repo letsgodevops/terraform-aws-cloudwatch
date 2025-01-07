@@ -10,13 +10,13 @@ locals {
 }
 
 module "name" {
-  source = "/modules/widgets/text"
+  source = "../../widgets/text"
 
   text = "Fargate Spot vs OnDemand"
 }
 
 module "vcpus" {
-  source = "/modules/widgets/value-chart"
+  source = "../../widgets/value-chart"
 
   name = "Fargate Spot vs OnDemand (${data.aws_region.current.name})"
   metrics = [
