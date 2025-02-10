@@ -4,7 +4,7 @@ variable "name" {
 }
 
 variable "widgets" {
-  type        = list(string)
+  type        = any
   description = "List of widgets to display on the dashboard"
 }
 
