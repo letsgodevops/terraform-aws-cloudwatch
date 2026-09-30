@@ -9,6 +9,12 @@ variable "alb_target_group_arn" {
   default     = null
 }
 
+variable "alb_enabled" {
+  type        = bool
+  description = "Add ALB widgets. Set it when alb_target_group_arn is not known at plan time (new target group), otherwise count fails. Defaults to alb_target_group_arn != null."
+  default     = null
+}
+
 variable "name" {
   type        = string
   description = "Name displayed on the widget"

@@ -43,14 +43,16 @@ locals {
       TargetResponseTime            = ["AWS/ApplicationELB", "TargetResponseTime", "TargetGroup", local.alb_target_group, "LoadBalancer", local.alb_lb_name],
     }
   }
-  alb_target_group = var.alb_target_group_arn != null ? data.aws_lb_target_group.this.0.arn_suffix : ""
-  alb_lb_name      = var.alb_target_group_arn != null ? replace(one(data.aws_lb_target_group.this.0.load_balancer_arns), "/^arn:.*:loadbalancer\\//", "") : ""
+  # A bool from the caller is known at plan time; the ARN of a not-yet-created target group is not.
+  alb_enabled      = var.alb_enabled != null ? var.alb_enabled : var.alb_target_group_arn != null
+  alb_target_group = local.alb_enabled ? data.aws_lb_target_group.this.0.arn_suffix : ""
+  alb_lb_name      = local.alb_enabled ? replace(one(data.aws_lb_target_group.this.0.load_balancer_arns), "/^arn:.*:loadbalancer\\//", "") : ""
   cluster_name     = replace(var.cluster_id, "/^arn:.*:cluster\\//", "")
 }
 
 
 data "aws_lb_target_group" "this" {
-  count = var.alb_target_group_arn != null ? 1 : 0
+  count = local.alb_enabled ? 1 : 0
   arn   = var.alb_target_group_arn
 }
 
@@ -99,7 +101,7 @@ module "ecs_tesks" {
 
 module "alb_summary" {
   source = "../../../modules/widgets/value"
-  count  = var.alb_target_group_arn != null ? 1 : 0
+  count  = local.alb_enabled ? 1 : 0
 
   name = "(ALB for ${var.name})"
   metrics = [
@@ -117,7 +119,7 @@ module "alb_summary" {
 
 module "alb_rq_count" {
   source = "../../../modules/widgets/chart"
-  count  = var.alb_target_group_arn != null ? 1 : 0
+  count  = local.alb_enabled ? 1 : 0
 
   name    = "Request Count (${var.name})"
   metrics = [local.metrics.alb.RequestCount_Sum]
@@ -125,7 +127,7 @@ module "alb_rq_count" {
 
 module "alb_response_time" {
   source = "../../../modules/widgets/chart"
-  count  = var.alb_target_group_arn != null ? 1 : 0
+  count  = local.alb_enabled ? 1 : 0
 
   name    = "Target Response Time (${var.name})"
   metrics = [local.metrics.alb.TargetResponseTime]
@@ -133,7 +135,7 @@ module "alb_response_time" {
 
 module "alb_response" {
   source = "../../../modules/widgets/chart"
-  count  = var.alb_target_group_arn != null ? 1 : 0
+  count  = local.alb_enabled ? 1 : 0
 
   stacked = true
   name    = "Response codes (${var.name})"

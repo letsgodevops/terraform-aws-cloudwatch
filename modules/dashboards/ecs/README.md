@@ -17,6 +17,7 @@ module "dashboard" {
   cluster_id   = aws_ecs_service.this.cluster
   service_name = aws_ecs_service.this.name
 
+  alb_enabled          = true # required when the target group is created in the same apply
   alb_target_group_arn = aws_lb_target_group.this.arn
 }
 ```
